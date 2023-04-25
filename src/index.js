@@ -1,29 +1,13 @@
 
+//docker start -> comando para rodar o banco de dados
+
+//npm init -> para iniciar um projeto do 0 em uma pasta vazia. 
 //estruutura inicial para criar um servidor
-//
-/* esse códico pose ser usado para qualquer criação de um banco:
-use lojavirtual; 
+//node index.js -> código para rodar o backend
 
-CREATE TABLE IF NOT EXISTS products(
-	id BIGINT(11) AUTO_INCREMENT,
-    nome VARCHAR(200),
-    price DECIMAL(10,2),
-    PRIMARY KEY (id)
-); 
-
-SELECT * FROM products;
-
-INSERT INTO products VALUE(1,'Batata',1.00);
-INSERT INTO products(nome, price) VALUE('Cartela de Ovo',10.00);
-INSERT INTO products(nome, price) VALUE('Cacetinho',3.50);
-
-ALTER USER 'root'
-IDENTIFIED WITH
-mysql_native_password BY 'root';
-
-FLUSH PRIVILEGES; 
-*/
-
+//banco-aula1\frontend> ng new lojavirtual -> criar um projeto angualar dentro do node
+//frontend\lojavirtual> ng serve --open -> código para rodar o angular dentro da pasta loja virtual frontend
+ 
 const express = require('express');
 //pacote express, salvou dentro de uma variável com o mesmo nome
 const mysql = require('mysql');
@@ -46,6 +30,10 @@ const connection = mysql.createConnection({
 connection.connect(); 
 //conexão com o banco
 
+app.use(cors({ 
+    origin: '*'
+    //origem da conexão não importa 
+}));
 
 //agora definir os endereços (via api)
 app.get('/products', function(req,res){
@@ -63,11 +51,19 @@ app.get('/products', function(req,res){
 })
 //pegando tabela produto e colocando em uma função para tratar os dados 
 
+app.get('/products/geladeira',function(req, res){ //font fez um get no caminho /product
+    connection.query('SELECT * FROM products WHERE categoria="Geladeira"',function(error, results){
+        if(error){
+            throw error;
+        }
 
-app.use(cors({ 
-    origin: '*'
-    //origem da conexão não importa 
-}));
+        else{
+            res.send(results)
+        }
+    })
+})
+
+
 
 app.listen(9001,'0.0.0.0', function(){
     console.log("Aplicatação rodando na porta: 9001");
